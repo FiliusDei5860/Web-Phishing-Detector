@@ -30,7 +30,9 @@ Sitios legítimos: 6157 instancias —-> 55.6992%
 
 Sitios phishing: 4897 instancias —-> 44.3007%
 
-<img width="708" height="554" alt="image" src="https://github.com/user-attachments/assets/92b2884b-4b81-4e4a-9533-644f59bbfa37" />
+| ![Distribución Inicial](https://github.com/user-attachments/assets/92b2884b-4b81-4e4a-9533-644f59bbfa37) |
+| :--: |
+| **Figura 1:** Distribución de clases antes de la generación de datos con SMOTE. |
 
 
 Hay un desequilibrio del 11.3985%. Al estar desequilibrado el set de datos, el modelo tendrá un sesgo y tenderá a detectar más sitios legítimos que sitios de phishing, lo que provocará falsos positivos en la detección. Por lo que se tendrán que aplicar técnicas de generación de datos para poder equilibrar en un 50/50 el dataset. La tecnica de generación de datos que se usará es SMOTE
@@ -150,7 +152,9 @@ Una ventaja muy clara del dataset es que ya está listo para trabajar ya que est
 
 ### Análisis de correlación de los datos
 
-<img width="1239" height="962" alt="image" src="https://github.com/user-attachments/assets/fdc40d46-d640-42df-afd9-b2f9c6156e63" />
+| ![Matriz](https://github.com/user-attachments/assets/fdc40d46-d640-42df-afd9-b2f9c6156e63) |
+| :--: |
+| **Figura 2:** Matriz de correlación de las características del dataset. |
 
 Con esta matriz de correlaciones se confirman las features más críticas para el resultado final de la clasificación, ya que son las features que más influencian la detección. 
 
@@ -173,6 +177,9 @@ Como se mencionó, el dataset no está equilibrado del todo. Y si bien se podrí
 Utiliza el algoritmo K-Nearest Neighbors (K-Vecinos más cercanos): 
 1. Toma un punto o instancia de la clase que se le indique (para este caso, la clase de web phishing).
 2. En esa posición, busca los vecinos más cercanos de la clase y, con base en ellos, crea una instancia nueva.
+
+![Distribución Después](https://github.com/user-attachments/assets/02258ca4-a4d6-4165-bc34-7eca03785092)
+*Figura 3: Distribución de clases después de la generación de datos con SMOTE (50/50).*
 
 Nota: En el código se tiende a usar una seed que es el número 42. Todo es con el objetivo de que siempre salgan generados los mismos resultados en cada corrida; si se quisieran resultados más variados, se cambiaría el seed o se quitaría. Pero como el objetivo es demostrar, entonces por ahora se quedará así. 
 
