@@ -198,4 +198,4 @@ teniendo un porcentaje 80/20: 80 porciento al entrenamiento y 20% dedicado para 
 
 [3] 19 tipos de ataques de phishing con ejemplos | Fortinet. (s. f.). Fortinet. https://www.fortinet.com/lat/resources/cyberglossary/types-of-phishing-attacks
 
-[4] Mohammad, R. M., Thabtah, F. T., & McCluskey, L. M. (s. f.). Phishing websites features. En UC- UC Irvine Machine Learning Repository. (Documento dentro del repositorio)
+[4] Mohammad, R. M., Thabtah, F. T., & McCluskey, L. M. (s. f.). Phishing websites features. En UC- UC Irvine Machine Learning Repository. (Documento dentro del repositorio, en data y se llama phishing websites features)
