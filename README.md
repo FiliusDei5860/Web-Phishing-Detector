@@ -183,7 +183,7 @@ Utiliza el algoritmo K-Nearest Neighbors (K-Vecinos más cercanos):
 
 Nota: En el código se tiende a usar una seed que es el número 42. Todo es con el objetivo de que siempre salgan generados los mismos resultados en cada corrida; si se quisieran resultados más variados, se cambiaría el seed o se quitaría. Pero como el objetivo es demostrar, entonces por ahora se quedará así. 
 
-Para evitar el impacto negativo del SMOTE, se tuvo que hace shuffling de todo el dataset para que al momento de hacer la separación de los datos, ambos sets tengan instnacias creadas por el SMOTE.
+Para evitar el impacto negativo del SMOTE, se tuvo que hace shuffling de todo el dataset para que al momento de hacer la separación de los datos, ambos sets tengan instancias creadas por el SMOTE.
 
 También se tuvo que transformar el set de datos. Como el modelo que se va a usar es un modelo de clasificación binaria, se va a usar una neurona de tipo sigmoide al final del modelo para dar el veredicto final. Pero como nuestros valores van desde -1, 0 y 1, la tarea se dificulta. Por lo que se tiene que usar un formato binario (0 o 1, en donde 0 es phishing y 1 es legítimo).
 
