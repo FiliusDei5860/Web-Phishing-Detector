@@ -189,7 +189,7 @@ También se tuvo que transformar el set de datos. Como el modelo que se va a usa
 
 ## Separación del dataset
 Ya que los datos han sido seleccionados, escalados y el dataset esté en equilibrio, ahora es momento de hacer la division de los datos. 
-Para poder entrenar el modelo, se separo los dataset equiulibrados en 4:
+Para poder entrenar el modelo, se separo los dataset equilibrados en 4:
 
 1. Features de entrenamiento.
 3. Resultados de entrenamiento.
