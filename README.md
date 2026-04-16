@@ -198,7 +198,49 @@ Para poder entrenar el modelo, se separo los dataset equilibrados en 4:
    
 teniendo un porcentaje 80/20: 80 porciento al entrenamiento y 20% dedicado para las pruebas.
 
-## Recursos y referencias: 
+# Desarrollo de modelo
+
+Según [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). Se establece que no existe un modelo universalmente mejor sino que su rendimiento y estructura dependerá de la complejidad del problema, el tipo de features, la calidad del dataset y el preprocesamiento del mismo. Adicionalmente menciona algunos modelos usados comúnmente para este tipo de cosas:
+
+1. Logistic Regression
+3. Decision Trees 
+2. Random Forest
+3. Support Vector Machines (SVM)
+4. Naive Bayes
+5. MLP (red neuronal básica)
+6. CNN (Convolutional Neural Networks)
+7. RNN / LSTM (para secuencias)
+8. Transformers (BERT, etc.)
+
+
+# Evaluación del modelo
+
+## Metricas de evaluación
+
+Las metricas que se usaron para evaluar el modelo es F1 Score y Recall junto con una matriz de confusión para determinar el desempeño del modelo. Esto con base en lo que se recomienda en el paper [5] Phishing URL detection with neural networks: an empirical study y [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). Que lo utiliza para medir el desempeño de sus modelos de detección de phishing y es una práctica usual en el área.
+
+# Posibles mejoras al proyecto.
+
+## Dos modelos.
+
+En el paper [5] Phishing URL detection with neural networks: an empirical study Se establece que para ese caso se utilizaron 2 modelos:
+
+1. Basado en deterministica.
+2. Basado en probabilistica.
+
+Esto podría generar la sensacion de redundancia en la información pero es bueno porque eso ayuda a determinar de manera más acertada si el sitio es phishing o no. Uno modelo nos dice si el sitio es phishing o no y el otro modelo nos dice que podria ser phishing (y no está seguro al 100%)  pero en dónde ambos coinciden, la probabilidad de que sea phishing aumenta y se reducen falsos positivos o falsos negativos. 
+
+## Ajuste de umbral de detección. 
+
+El Umbral de detección establece una tolerancia al momento de clasificar los datos. normalment eestá en el 0.5. es decir, que cuando un resultado es 0.5 o en adelante se considera 1 (legitimo) y abajo de eso es 0 (phishing). en este caso se puede ajustar el umbral bajandolo para detectar más rigurosamente los sitios de phishing (bajando el umbral al 0.4 o 0.3. abajo de eso, todo es phishing y arriba de eso, todo es legitimo. Que puede dar falsos negativos pero esto podría significar una mejora porque es preferible identificar sitios que si son phishing de verdad y dejar pasar algunos que son dudosos. 
+
+## testing con dataset de la vida real.
+
+Otra mejora que se suguiere es que en el testing no se utilice el mismo dataset que se uso para entrenar y validar, sino que se utilice uno con datos de la vida real (de otro dataset) para ver el desempeño del modelo en un entorno real. Esto puede tener dificultades porque usualmente se necesitaría transformar los datos de tal manera que queden como los que acepta nuestro modelo. Eso podría siginificar programar el procesos para sacar los datos y agruparlos tal y como espera el modelo recibirlos. Estos dataset pueden ser sacados de https://www.phishtank.com/ y https://tranco-list.eu/list/ZWYQG/1000000
+
+Solo si se debe de tener en cuenta que no están en el mismo formato que el de nosotros o nisiqueir amasticados y se tendría que sacar features, hacer el label y todo el proceso para que se pueda procesar dichos datos. 
+
+# Recursos y referencias: 
 [1] Phishing Websites - UCI Machine Learning https://archive.ics.uci.edu/dataset/327/phishing+websites
 
 [2] Eswar Chand. Phishing Websites- https://www.kaggle.com/code/eswarchandt/website-phishing/input
@@ -206,3 +248,7 @@ teniendo un porcentaje 80/20: 80 porciento al entrenamiento y 20% dedicado para 
 [3] 19 tipos de ataques de phishing con ejemplos | Fortinet. (s. f.). Fortinet. https://www.fortinet.com/lat/resources/cyberglossary/types-of-phishing-attacks
 
 [4] Mohammad, R. M., Thabtah, F. T., & McCluskey, L. M. (s. f.). Phishing websites features. En UC- UC Irvine Machine Learning Repository. (Documento dentro del repositorio, en data y se llama phishing websites features)
+
+[5] Ghalechyan, H., Israyelyan, E., Arakelyan, A., Hovhannisyan, G., & Davtyan, A. (2024). Phishing URL detection with neural networks: an empirical study. Scientific Reports, 14(1), 25134. https://doi.org/10.1038/s41598-024-74725-6
+
+[6] Lukasz Wilk-Jakubowski, J. L. W. J., Wilk-Jakubowski, L. W. J., Wilk-Jakubowski, G. W. J., & Sikora, A. S. (2025, 22 septiembre). Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). MDPI. Recuperado 15 de abril de 2026, de https://www.mdpi.com/2079-9292/14/18/3744
