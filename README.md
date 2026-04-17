@@ -283,7 +283,7 @@ En conclusión, estás metricas son las indicadas para medir el desempeño del m
 
 ## Resultados
 
-| ![Árbol de Decisión](https://github.com/user-attachments/assets/e87dda4d-43fd-443d-ab01-6135bcb2c5ce) |
+| ![Matriz de Confusion y resultados](https://github.com/user-attachments/assets/b87f3dc3-e9cc-46ba-b5c4-8ee7c4af671f) |
 | :--: |
 | **Figura 6:** Matriz de confusión y resultados de la evaluación del modelo con métricas F1Score, Recall y Precision. |
 
