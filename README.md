@@ -294,7 +294,7 @@ En conclusión, estás metricas son las indicadas para medir el desempeño del m
 
 El Recall de 94.27% representa la sensibilidad que tiene el modelo para encontrar sitios de phishing. Se podría decir que de cada 100 ataques, el modelo detectó  a más de 94. Lo cuál es un excelente nivel para un modelo base.
 
-La Precisión de 91.38% representa la confiabilidad del modelo al clasificar los sitios. Cuando el modelo marca un sitio como Phishing, tiene un 91.38% de probabilidad de estar en lo correcto. Si nos fijamos en la matriz de confusión existe un margen de error de 90 casos mal identificados. Es porque el modelo es demasiado estricto al evaluarlos (ubral de tolerancia), pero en ciberseguridad es preferible a ser demasiado permisivo y dejar pasar amenazas que pueden afectar a una compañia o a miles de usuarios. 
+La Precisión de 91.38% representa la confiabilidad del modelo al clasificar los sitios. Cuando el modelo marca un sitio como Phishing, tiene un 91.38% de probabilidad de estar en lo correcto. Si nos fijamos en la matriz de confusión existe un margen de error de 90 casos mal identificados. Es porque el modelo es demasiado estricto al evaluarlos (umbral de tolerancia), pero en ciberseguridad es preferible a ser demasiado permisivo y dejar pasar amenazas que pueden afectar a una compañia o a miles de usuarios. 
 
 El F1-Score de 92.80% es el promedio armonizado entre Recall y Precision dos anteriores. Un F1-Score por encima del 90% indica que el modelo es bastante robusto robusto. Es decir, que está sacrificando demasiada precisión para obtener recall, o al revés. Es un modelo equilibrado y confiable en un 92.80%.
 
