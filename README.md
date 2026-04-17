@@ -178,8 +178,9 @@ Utiliza el algoritmo K-Nearest Neighbors (K-Vecinos más cercanos):
 1. Toma un punto o instancia de la clase que se le indique (para este caso, la clase de web phishing).
 2. En esa posición, busca los vecinos más cercanos de la clase y, con base en ellos, crea una instancia nueva.
 
-![Distribución Después](https://github.com/user-attachments/assets/02258ca4-a4d6-4165-bc34-7eca03785092)
-*Figura 3: Distribución de clases después de la generación de datos con SMOTE (50/50).*
+| ![Distribución SMOTE](https://github.com/user-attachments/assets/02258ca4-a4d6-4165-bc34-7eca03785092) |
+| :--: |
+| **Figura 3:** Distribución de clases después de la generación de datos con SMOTE (50/50). |
 
 Nota: En el código se tiende a usar una seed que es el número 42. Todo es con el objetivo de que siempre salgan generados los mismos resultados en cada corrida; si se quisieran resultados más variados, se cambiaría el seed o se quitaría. Pero como el objetivo es demostrar, entonces por ahora se quedará así. 
 
@@ -200,7 +201,7 @@ teniendo un porcentaje 80/20: 80 porciento al entrenamiento y 20% dedicado para 
 
 # Desarrollo de modelo
 
-Según [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). Se establece que no existe un modelo universalmente mejor sino que su rendimiento y estructura dependerá de la complejidad del problema, el tipo de features, la calidad del dataset y el preprocesamiento del mismo. Adicionalmente menciona algunos modelos usados comúnmente para este tipo de cosas:
+Según [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024).  Se establece que no existe un modelo universalmente mejor sino que su rendimiento y estructura dependerá de la complejidad del problema, el tipo de features, la calidad del dataset y el preprocesamiento del mismo. Adicionalmente menciona algunos modelos usados comúnmente para este tipo de cosas:
 
 1. Logistic Regression
 3. Decision Trees 
@@ -212,12 +213,91 @@ Según [6] Machine Learning and Neural Networks for Phishing Detection: A System
 7. RNN / LSTM (para secuencias)
 8. Transformers (BERT, etc.)
 
+Seleccioné el  modelo Decision Tree como línea base debido a su uso frecuente en la literatura ( [7] Phishing URL Detection using Artificial Neural Network.) como punto de referencia para evaluar modelos más complejo. Muchos estudios comparativos incluyen árboles de decisión junto con modelos más avanzados como redes neuronales, lo que da una línea base inicial. Su simplicidad, interpretabilidad y bajo costo computacional lo ubica como un excelente primer modelo. 
 
+¿Cómo funciona en desicion tree?
+Un Arból de desiciones es modelo que cuenta con nodos (nodo raiz y hojas) y las ramas que los une. La idea principal del desicion tree es que, por medio de desiciones logicas, se pueda separar un resultado del otro. En este caso, separar los sitios maliciosos de los sitios legitimos. 
+
+Entonces el arbol hace esto:
+1. ¿HTTPS <= 0?
+3. ¿SubDomains <= 1?
+4. ¿AnchorURL <= 0?
+
+Logrando separar así los sitios web por medio de las fetures.Esto lo hace por medio de una métrica llamada: "Gini" ó "Entropy". Metrica que se usa de la siguiente manera:
+
+En el nodo raiz, se evaluan todas las features y se elige la mejor de acuerdo a un indice de pureza. después se crean dos ramificaciones: Una para un resultado positivo (True) y otra para un resultado negativo (False). Tras eso, se pasa al siguiente nodo de la izquierda y se vuelve a evaluar las features para ver cuál impacta más en ese nodo. En realidad no existe una lista de preguntas global sino que esa lista se va haciendo conforme se va creando el arbol de desicion.  (Como un algoritmo codicioso haciendo que el arbol tome la mejor respuesta en el momento sin preocuparse que vendrá después) 
+
+La métrica de gini funciona con el indice de pureza ¿pero que es eso? 
+El indice de pureza se refiere a la clasificacion y separacion. Para el momento de darle los datos de train al arbol, el indice de pureza es 50 - 50 (la mayor pureza posible porque todo está mezclado) entonces el indice gini es 0.5, debe de separar. De ahí elige la feature más significativa para comenzar a separar los sitios web. 
+
+| ![Árbol de Decisión](https://github.com/user-attachments/assets/a3b4ff88-95e9-455a-a2a4-3a885517bb44) |
+| :--: |
+| **Figura 4:** Diagrama de ejemplo de estructura lógica y partición de datos del árbol de decisión (depth=4). |
+
+Como se puede ver en la figura 4, estámos en maxima incertidumbre inicial y el modelo "decidió" que tener un certificado SSL (HTTPS) es la variable más fuerte para comenzar a separar los datos (Lo cuál no es coincidencia ya que está relación se vió en la matriz de correlación en la figura 2). Si es True (No tiene HTTPS ), se va a la izquierda naranja. Si es False Tiene HTTPS, se va a la derecha (azul). Notemos que el numero <= 0.5 es nuestro umbral de tolerancia, dicho umbral puede bajarse o subir para hacer más estricto o más flojo la detección. 
+
+Ahora que ya se explicó como funciona un arbol de desicion, el método de gini y porque se eligió, se tiene que abordar como se configuró el árbol.
+
+Para consturir el árbol se tuvo que hacer uso de librerías de sklean, especificamente en el apartado de tree: 
+
+from sklearn.tree import DecisionTreeClassifier  <---- Para importar la estructura del modelo
+from sklearn.tree import plot_tree <---- para graficar dicho modelo.
+
+de ahí definímos el modelo colocando dos cosas: Una seed que, como ya habíamos dicho era de 42 para que siempre salga el mismo resultado; Y un max depth igual a 6. 
+El max depth es el límite que se le pone al modelo sobre cuantas comparaciones o preguntas puede hacer antes de llegar a una conclusión. Dicho de otro modo, es el número de divisiones que pude hacer el árbol a los datos. Por lo mismo, el índice usado en éste no es coincidencia, sino que es por el número de features que vamos a evaluar. Así el árbol puede generar al menos una ruta que potencialmente incluya a todas las features que requerimos.
+
+El árbol binario puede tener overfitting o undefitting en dependencía del max depth. La idea es generalizar lo suficiente sin caer en la especificación (overfitting ó "memorizar las repuestas") y sin caer en la ambiguedad (underfitting ó "no aprender"). Si el max depth es muy alto, el arbol crea reglas ridículamente específicas para puntos que son únicos y tienen ruido, lo cual no le funcionaría al momento en el que hacemos la evaluación con el test o hacemos la evaluación con otros datos de la vida real. 
+
+
+| ![Árbol de Decisión](https://github.com/user-attachments/assets/9c4b7736-c359-4dc4-951c-a816efd875e4) |
+| :--: |
+| **Figura 5:** Diagrama de la estructura lógica y partición de datos del árbol de decisión (depth=6). |
+
+Ya que el modelo fue entrenado, le damos los datos que jamás ha visto (prueba o test) y le pedimos que haga la predicción de esos datos. Es decir, ejecuta su evaluación sobre los datos, la diferencia es que esta vez no queríamos entrenarlo sino ver que tan bien aprendió por lo que no le dimos la respuestas. 
+
+tras eso, sacamos sus predicciónes, y junto con los resultados de esos test, le hicimos flatten para poder evaluarlos.
+Sacamos F1 Score y Recall, para ello vamos a contar los falsos positivos (FP) los falsos negativos (FN), los verdaderos positivos (TP) y los verdaderos negativos (TN) contando cuando el resultado de la prediccion y el de los datos reales coincidan o no coincidan. 
+
+ 
 # Evaluación del modelo
 
 ## Metricas de evaluación
 
-Las metricas que se usaron para evaluar el modelo es F1 Score y Recall junto con una matriz de confusión para determinar el desempeño del modelo. Esto con base en lo que se recomienda en el paper [5] Phishing URL detection with neural networks: an empirical study y [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). Que lo utiliza para medir el desempeño de sus modelos de detección de phishing y es una práctica usual en el área.
+Las metricas que se usaron para evaluar el modelo es F1 Score, Recall, Precisión, junto con una matriz de confusión para determinar el desempeño del modelo. Esto con base en lo que se recomienda en el paper [5] Phishing URL detection with neural networks: an empirical study y [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). Que lo utiliza para medir el desempeño de sus modelos de detección de phishing y es una práctica usual en el área. [8] Deep learning-based phishing classification framework for accurate detection using optimized URL intelligence. Scientific Reports. [9]  High accuracy phishing detection based on convolutional neural networks. 
+
+¿por qué estás métricas y no otras?
+
+### Recall
+En éste caso, el Recall mide todos los ataques de phishing reales que existen. Un Recall bajo implica que los ataques se están filtrando y llegando al usuario. 
+
+### Precision
+Mide cuantas respuestas fueron correctas. Si la precisión es muy baja, el usuario recibirá demasiadas falsas alarmas. Esto causa que el usuario termine desactivando el antivirus porque siempre bloquea todo.
+
+### F1 SCORE
+El F1-Score penaliza los valores extremos. Si un modelo tiene un Recall de 100% pero una Precision de 10%, el F1-Score será bajo. Te da un número único que resume el balance entre seguridad y usabilidad.
+
+### Matriz de Confusión
+Nos premite ver exactamente en que se equivocó el modelo (falsos positivos, falsos negativos, verdaderos positivos, etc. )
+
+En conclusión, estás metricas son las indicadas para medir el desempeño del modelo por la información que aportan y lo bien establecidas que están tanto en justificacion para el proyecto como en su uso general en el área. 
+
+## Resultados
+
+| ![Árbol de Decisión](https://github.com/user-attachments/assets/e87dda4d-43fd-443d-ab01-6135bcb2c5ce) |
+| :--: |
+| **Figura 6:** Matriz de confusión y resultados de la evaluación del modelo con métricas F1Score, Recall y Precision. |
+
+1. 954 (Verdaderos Negativos - TN): Son ataques de Phishing que el modelo bloqueó correctamente.
+2. 868 (Verdaderos Positivos - TP): Son sitios Legítimos que el modelo dejó pasar correctamente.
+3. 58 (Falsos Positivos - FP): Sitios de Phishing que el modelo clasificó como Legítimos.Es decir, que son ataques que se filtraron y llegaron al usuario final
+4. 90 (Falsos Negativos - FN): Sitios seguros que el modelo bloqueó por sospecha. Qué básiacmente es una falsa alarma para el usuario. 
+
+El Recall de 94.27% representa la sensibilidad que tiene el modelo para encontrar sitios de phishing. Se podría decir que de cada 100 ataques, el modelo detectó  a más de 94. Lo cuál es un excelente nivel para un modelo base.
+
+La Precisión de 91.38% representa la confiabilidad del modelo al clasificar los sitios. Cuando el modelo marca un sitio como Phishing, tiene un 91.38% de probabilidad de estar en lo correcto. Si nos fijamos en la matriz de confusión existe un margen de error de 90 casos mal identificados. Es porque el modelo es demasiado estricto al evaluarlos (ubral de tolerancia), pero en ciberseguridad es preferible a ser demasiado permisivo y dejar pasar amenazas que pueden afectar a una compañia o a miles de usuarios. 
+
+El F1-Score de 92.80% es el promedio armonizado entre Recall y Precision dos anteriores. Un F1-Score por encima del 90% indica que el modelo es bastante robusto robusto. Es decir, que está sacrificando demasiada precisión para obtener recall, o al revés. Es un modelo equilibrado y confiable en un 92.80%.
+
 
 # Posibles mejoras al proyecto.
 
@@ -240,7 +320,7 @@ Otra mejora que se suguiere es que en el testing no se utilice el mismo dataset 
 
 Solo si se debe de tener en cuenta que no están en el mismo formato que el de nosotros o nisiqueir amasticados y se tendría que sacar features, hacer el label y todo el proceso para que se pueda procesar dichos datos. 
 
-# Recursos y referencias: 
+# Recursos y referencias 
 [1] Phishing Websites - UCI Machine Learning https://archive.ics.uci.edu/dataset/327/phishing+websites
 
 [2] Eswar Chand. Phishing Websites- https://www.kaggle.com/code/eswarchandt/website-phishing/input
@@ -252,3 +332,9 @@ Solo si se debe de tener en cuenta que no están en el mismo formato que el de n
 [5] Ghalechyan, H., Israyelyan, E., Arakelyan, A., Hovhannisyan, G., & Davtyan, A. (2024). Phishing URL detection with neural networks: an empirical study. Scientific Reports, 14(1), 25134. https://doi.org/10.1038/s41598-024-74725-6
 
 [6] Lukasz Wilk-Jakubowski, J. L. W. J., Wilk-Jakubowski, L. W. J., Wilk-Jakubowski, G. W. J., & Sikora, A. S. (2025, 22 septiembre). Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). MDPI. Recuperado 15 de abril de 2026, de https://www.mdpi.com/2079-9292/14/18/3744
+
+[7] Patel, J. (2022, April 17). Phishing URL Detection using Artificial Neural Network. https://journal.ijresm.com/index.php/ijresm/article/view/1937
+
+[8] Gobinath, R., & Manikandan, S. (2026). Deep learning-based phishing classification framework for accurate detection using optimized URL intelligence. Scientific Reports. https://doi.org/10.1038/s41598-026-46481-2
+
+[9] Yerima, S. Y., & Alzaylaee, M. K. (2020, April 8). High accuracy phishing detection based on convolutional neural networks. arXiv.org. https://arxiv.org/abs/2004.03960
