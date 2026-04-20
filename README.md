@@ -290,7 +290,7 @@ En conclusión, estás metricas son las indicadas para medir el desempeño del m
 1. 954 (Verdaderos Negativos - TN): Son ataques de Phishing que el modelo bloqueó correctamente.
 2. 868 (Verdaderos Positivos - TP): Son sitios Legítimos que el modelo dejó pasar correctamente.
 3. 58 (Falsos Positivos - FP): Sitios de Phishing que el modelo clasificó como Legítimos.Es decir, que son ataques que se filtraron y llegaron al usuario final
-4. 90 (Falsos Negativos - FN): Sitios seguros que el modelo bloqueó por sospecha. Qué básiacmente es una falsa alarma para el usuario. 
+4. 90 (Falsos Negativos - FN): Sitios seguros que el modelo bloqueó por sospecha. Qué básicamente es una falsa alarma para el usuario. 
 
 El Recall de 94.27% representa la sensibilidad que tiene el modelo para encontrar sitios de phishing. Se podría decir que de cada 100 ataques, el modelo detectó  a más de 94. Lo cuál es un excelente nivel para un modelo base.
 
