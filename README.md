@@ -318,7 +318,7 @@ El Umbral de detección establece una tolerancia al momento de clasificar los da
 
 Otra mejora que se suguiere es que en el testing no se utilice el mismo dataset que se uso para entrenar y validar, sino que se utilice uno con datos de la vida real (de otro dataset) para ver el desempeño del modelo en un entorno real. Esto puede tener dificultades porque usualmente se necesitaría transformar los datos de tal manera que queden como los que acepta nuestro modelo. Eso podría siginificar programar el procesos para sacar los datos y agruparlos tal y como espera el modelo recibirlos. Estos dataset pueden ser sacados de https://www.phishtank.com/ y https://tranco-list.eu/list/ZWYQG/1000000
 
-Solo si se debe de tener en cuenta que no están en el mismo formato que el de nosotros o nisiqueir amasticados y se tendría que sacar features, hacer el label y todo el proceso para que se pueda procesar dichos datos. 
+Solo si se debe de tener en cuenta que no están en el mismo formato que el de nosotros o ni siquiera procesados y se tendría que sacar features, hacer el label y todo el proceso para que se pueda usar dichos datos. 
 
 # Recursos y referencias 
 [1] Phishing Websites - UCI Machine Learning https://archive.ics.uci.edu/dataset/327/phishing+websites
