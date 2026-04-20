@@ -253,10 +253,10 @@ El árbol binario puede tener overfitting o undefitting en dependencía del max 
 | :--: |
 | **Figura 5:** Diagrama de la estructura lógica y partición de datos del árbol de decisión (depth=6). |
 
-Ya que el modelo fue entrenado, le damos los datos que jamás ha visto (prueba o test) y le pedimos que haga la predicción de esos datos. Es decir, ejecuta su evaluación sobre los datos, la diferencia es que esta vez no queríamos entrenarlo sino ver que tan bien aprendió por lo que no le dimos la respuestas. 
+Ya que el modelo fue entrenado, le damos los datos que jamás ha visto (prueba o test) y le pedimos que haga la predicción de esos datos. Es decir, ejecuta su evaluación sobre los datos, la diferencia es que esta vez no quería entrenarlo sino ver que tan bien aprendió por lo que no le dí las respuestas. 
 
-tras eso, sacamos sus predicciónes, y junto con los resultados de esos test, le hicimos flatten para poder evaluarlos.
-Sacamos F1 Score y Recall, para ello vamos a contar los falsos positivos (FP) los falsos negativos (FN), los verdaderos positivos (TP) y los verdaderos negativos (TN) contando cuando el resultado de la prediccion y el de los datos reales coincidan o no coincidan. 
+tras eso, saca sus predicciónes, y junto con los resultados de esos test, se hace flatten para poder evaluarlos.
+Sacamos F1 Score y Recall, para ello vamos a contar los falsos positivos (FP) los falsos negativos (FN), los verdaderos positivos (TP) y los verdaderos negativos (TN) contando cuando el resultado de la prediccion y el de los datos reales coincidan o no coincidan.
 
  
 # Evaluación del modelo
@@ -294,7 +294,7 @@ En conclusión, estás metricas son las indicadas para medir el desempeño del m
 
 El Recall de 94.27% representa la sensibilidad que tiene el modelo para encontrar sitios de phishing. Se podría decir que de cada 100 ataques, el modelo detectó  a más de 94. Lo cuál es un excelente nivel para un modelo base.
 
-La Precisión de 91.38% representa la confiabilidad del modelo al clasificar los sitios. Cuando el modelo marca un sitio como Phishing, tiene un 91.38% de probabilidad de estar en lo correcto. Si nos fijamos en la matriz de confusión existe un margen de error de 90 casos mal identificados. Es porque el modelo es demasiado estricto al evaluarlos (umbral de tolerancia), pero en ciberseguridad es preferible a ser demasiado permisivo y dejar pasar amenazas que pueden afectar a una compañia o a miles de usuarios. 
+La Precisión de 91.38% representa la confiabilidad del modelo al clasificar los sitios. Cuando el modelo marca un sitio como Phishing, tiene un 91.38% de probabilidad de estar en lo correcto. Si nos fijamos en la matriz de confusión existe un margen de error de 90 casos mal identificados. Es porque el modelo es demasiado estricto al evaluarlos (umbral de tolerancia), pero en ciberseguridad es preferible a ser demasiado permisivo y dejar pasar amenazas que pueden afectar a una compañía o a miles de usuarios. 
 
 El F1-Score de 92.80% es el promedio armonizado entre Recall y Precision dos anteriores. Un F1-Score por encima del 90% indica que el modelo es bastante robusto robusto. Es decir, que está sacrificando demasiada precisión para obtener recall, o al revés. Es un modelo equilibrado y confiable en un 92.80%.
 
@@ -308,11 +308,11 @@ En el paper [5] Phishing URL detection with neural networks: an empirical study 
 1. Basado en deterministica.
 2. Basado en probabilistica.
 
-Esto podría generar la sensacion de redundancia en la información pero es bueno porque eso ayuda a determinar de manera más acertada si el sitio es phishing o no. Uno modelo nos dice si el sitio es phishing o no y el otro modelo nos dice que podria ser phishing (y no está seguro al 100%)  pero en dónde ambos coinciden, la probabilidad de que sea phishing aumenta y se reducen falsos positivos o falsos negativos. 
+Esto podría generar la sensacion de redundancia en la información pero es bueno porque eso ayuda a determinar de manera más acertada si el sitio es phishing o no. Uno modelo nos dice si el sitio es phishing o no y el otro modelo nos dice que podria ser phishing (y no está seguro al 100%)  pero en dónde ambos coinciden, la probabilidad de que sea phishing aumenta y se reducen falsos positivos o falsos negativos.
 
 ## Ajuste de umbral de detección. 
 
-El Umbral de detección establece una tolerancia al momento de clasificar los datos. normalment eestá en el 0.5. es decir, que cuando un resultado es 0.5 o en adelante se considera 1 (legitimo) y abajo de eso es 0 (phishing). en este caso se puede ajustar el umbral bajandolo para detectar más rigurosamente los sitios de phishing (bajando el umbral al 0.4 o 0.3. abajo de eso, todo es phishing y arriba de eso, todo es legitimo. Que puede dar falsos negativos pero esto podría significar una mejora porque es preferible identificar sitios que si son phishing de verdad y dejar pasar algunos que son dudosos. 
+El Umbral de detección establece una tolerancia al momento de clasificar los datos. normalmente está en el 0.5. es decir, que cuando un resultado es 0.5 o en adelante se considera 1 (legitimo) y abajo de eso es 0 (phishing). en este caso se puede ajustar el umbral bajandolo para detectar más rigurosamente los sitios de phishing (bajando el umbral al 0.4 o 0.3. abajo de eso, todo es phishing y arriba de eso, todo es legítimo. Que puede dar falsos negativos pero esto podría significar una mejora porque es preferible identificar sitios que si son phishing de verdad y dejar pasar algunos que son dudosos. 
 
 ## testing con dataset de la vida real.
 
