@@ -233,10 +233,33 @@ Un Callback es una herramienta de Keras que nos permite ejecutar acciones autom�
 Finalmente guardamos el archivo en la ruta que se le especifique dentro del drive, e indicamos que el modelo ha sido guardado exitosamente.
 
 Al final se entrena al modelo y se guarda con el objetivo de poder almacenar los pesos del entrenamiento y colocarlos en otro modelo (cargar en otro modelo) se le debe de dar nombre a las capas para saber en dónde se asigna el peso. 
- 
+
+ 
+
+ 
 # Evaluación del modelo
 
-## Metricas de evaluación
+## Evaluacion manual del modelo
+
+Para evaluar el modelo a mano, se creó un nuevo archivo en google colab y dentro vamos a colocar los pesos en un nuevo modelo. 
+Para ello, creamos una función que crea un modelo identico al que entrenamos y compilamos. Se llama la función, se crea el modelo y obtenemos los pesos del archivo en el cual guardamos los pesos del modelo que ya entrenamos. De ésta manea, no necesitamos entrenar el modelo otra vez, lo cual es útil para cuando queramos cargar un modelo entrenado sin la necesidad de tener que entrenarlo en el momento. Rápido y listo para hacer pruebas con él.
+
+Para la prueba manual se necesita una interfaz gráfica en dónde se pueda digitar con 1 y 0 el valor de las features de la instancia que estamos creando. y con base en ello, dar un resultado aproximado si es phishing o no ¿cómo hace esto? pues para esto hay que saber que la neurona sigmoide convierte el resultado en 1 o 0 de acuerdo a un umbral, un umbral de tolerancia. Dicho umbral tiene gran incluencia al momento de clasificar lso sitios, ver sección: Mejoras al proyecto --> Ajuste de umbral de detección (ajuste de hiper parámetro) para más información. 
+Para determinar el porcentaje, solo se arroja el resultado en bruto antes de que la neurona sigmoide lo transforme en 1 o 0.
+
+para la interfaz se importan las librerías: 
+
+import ipywidgets as widgets
+from IPython.display import display
+
+Se configura la interfaz para que se digiten las 6 features y al presionar el botón "Probar" Entra el modelo a hacer una predicción del resultado y lo clasifica.
+<img width="827" height="277" alt="image" src="https://github.com/user-attachments/assets/46ba7cef-8e3f-4453-bb7c-85d8ede9bf80" />
+
+| ![Display de la instancia manual](https://github.com/user-attachments/assets/46ba7cef-8e3f-4453-bb7c-85d8ede9bf80) |
+| :--: |
+| **Figura 4:** Interfaz gráfica para la creación de una instancia manual y evaluación |
+
+## Métricas de evaluación
 
 La métrica principal que se utiliza para evaluar el desempeño del modelo es el Recall del mismo. Aunque se calcule la precisión y el F1-Score para tener un panorama más completo, la toma de desiciones y ajustes del modelo se hacen con base en el Recall. Que es, en esté caso, la capacidad de detección de amenazas reales. Ésta métrica se establecio como principal por lo que representa en el modelo y su objetivo (detectar sitios maliciosos phishing para proteger al usuario de estafas) y según lo visto en [5] Phishing URL detection with neural networks: an empirical study y [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). Que lo utiliza para medir el desempeño de sus modelos de detección de phishing y es una práctica usual en el área. [8] Deep learning-based phishing classification framework for accurate detection using optimized URL intelligence. Scientific Reports. [9]  High accuracy phishing detection based on convolutional neural networks; que usaron ésta métrica en sus estudios y en sus modelos. 
 
