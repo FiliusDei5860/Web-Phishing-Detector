@@ -213,73 +213,34 @@ Según [6] Machine Learning and Neural Networks for Phishing Detection: A System
 7. RNN / LSTM (para secuencias)
 8. Transformers (BERT, etc.)
 
-Seleccioné el  modelo Decision Tree como línea base debido a su uso frecuente en la literatura ( [7] Phishing URL Detection using Artificial Neural Network.) como punto de referencia para evaluar modelos más complejo. Muchos estudios comparativos incluyen árboles de decisión junto con modelos más avanzados como redes neuronales, lo que da una línea base inicial. Su simplicidad, interpretabilidad y bajo costo computacional lo ubica como un excelente primer modelo. 
-
-¿Cómo funciona en desicion tree?
-Un Arból de desiciones es modelo que cuenta con nodos (nodo raiz y hojas) y las ramas que los une. La idea principal del desicion tree es que, por medio de desiciones logicas, se pueda separar un resultado del otro. En este caso, separar los sitios maliciosos de los sitios legitimos. 
-
-Entonces el arbol hace esto:
-1. ¿HTTPS <= 0?
-3. ¿SubDomains <= 1?
-4. ¿AnchorURL <= 0?
-
-Logrando separar así los sitios web por medio de las fetures.Esto lo hace por medio de una métrica llamada: "Gini" ó "Entropy". Metrica que se usa de la siguiente manera:
-
-En el nodo raiz, se evaluan todas las features y se elige la mejor de acuerdo a un indice de pureza. después se crean dos ramificaciones: Una para un resultado positivo (True) y otra para un resultado negativo (False). Tras eso, se pasa al siguiente nodo de la izquierda y se vuelve a evaluar las features para ver cuál impacta más en ese nodo. En realidad no existe una lista de preguntas global sino que esa lista se va haciendo conforme se va creando el arbol de desicion.  (Como un algoritmo codicioso haciendo que el arbol tome la mejor respuesta en el momento sin preocuparse que vendrá después) 
-
-La métrica de gini funciona con el indice de pureza ¿pero que es eso? 
-El indice de pureza se refiere a la clasificacion y separacion. Para el momento de darle los datos de train al arbol, el indice de pureza es 50 - 50 (la mayor pureza posible porque todo está mezclado) entonces el indice gini es 0.5, debe de separar. De ahí elige la feature más significativa para comenzar a separar los sitios web. 
-
-| ![Árbol de Decisión](https://github.com/user-attachments/assets/a3b4ff88-95e9-455a-a2a4-3a885517bb44) |
-| :--: |
-| **Figura 4:** Diagrama de ejemplo de estructura lógica y partición de datos del árbol de decisión (depth=4). |
-
-Como se puede ver en la figura 4, estámos en maxima incertidumbre inicial y el modelo "decidió" que tener un certificado SSL (HTTPS) es la variable más fuerte para comenzar a separar los datos (Lo cuál no es coincidencia ya que está relación se vió en la matriz de correlación en la figura 2). Si es True (No tiene HTTPS ), se va a la izquierda naranja. Si es False Tiene HTTPS, se va a la derecha (azul). Notemos que el numero <= 0.5 es nuestro umbral de tolerancia, dicho umbral puede bajarse o subir para hacer más estricto o más flojo la detección. 
-
-Ahora que ya se explicó como funciona un arbol de desicion, el método de gini y porque se eligió, se tiene que abordar como se configuró el árbol.
-
-Para consturir el árbol se tuvo que hacer uso de librerías de sklean, especificamente en el apartado de tree: 
-
-from sklearn.tree import DecisionTreeClassifier  <---- Para importar la estructura del modelo
-from sklearn.tree import plot_tree <---- para graficar dicho modelo.
-
-de ahí definímos el modelo colocando dos cosas: Una seed que, como ya habíamos dicho era de 42 para que siempre salga el mismo resultado; Y un max depth igual a 6. 
-El max depth es el límite que se le pone al modelo sobre cuantas comparaciones o preguntas puede hacer antes de llegar a una conclusión. Dicho de otro modo, es el número de divisiones que pude hacer el árbol a los datos. Por lo mismo, el índice usado en éste no es coincidencia, sino que es por el número de features que vamos a evaluar. Así el árbol puede generar al menos una ruta que potencialmente incluya a todas las features que requerimos.
-
-El árbol binario puede tener overfitting o undefitting en dependencía del max depth. La idea es generalizar lo suficiente sin caer en la especificación (overfitting ó "memorizar las repuestas") y sin caer en la ambiguedad (underfitting ó "no aprender"). Si el max depth es muy alto, el arbol crea reglas ridículamente específicas para puntos que son únicos y tienen ruido, lo cual no le funcionaría al momento en el que hacemos la evaluación con el test o hacemos la evaluación con otros datos de la vida real. 
 
 
-| ![Árbol de Decisión](https://github.com/user-attachments/assets/9c4b7736-c359-4dc4-951c-a816efd875e4) |
-| :--: |
-| **Figura 5:** Diagrama de la estructura lógica y partición de datos del árbol de decisión (depth=6). |
-
-Ya que el modelo fue entrenado, le damos los datos que jamás ha visto (prueba o test) y le pedimos que haga la predicción de esos datos. Es decir, ejecuta su evaluación sobre los datos, la diferencia es que esta vez no quería entrenarlo sino ver que tan bien aprendió por lo que no le dí las respuestas. 
-
-tras eso, saca sus predicciónes, y junto con los resultados de esos test, se hace flatten para poder evaluarlos.
-Sacamos F1 Score y Recall, para ello vamos a contar los falsos positivos (FP) los falsos negativos (FN), los verdaderos positivos (TP) y los verdaderos negativos (TN) contando cuando el resultado de la prediccion y el de los datos reales coincidan o no coincidan.
-
- 
+ 
 # Evaluación del modelo
 
 ## Metricas de evaluación
 
-Las metricas que se usaron para evaluar el modelo es F1 Score, Recall, Precisión, junto con una matriz de confusión para determinar el desempeño del modelo. Esto con base en lo que se recomienda en el paper [5] Phishing URL detection with neural networks: an empirical study y [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). Que lo utiliza para medir el desempeño de sus modelos de detección de phishing y es una práctica usual en el área. [8] Deep learning-based phishing classification framework for accurate detection using optimized URL intelligence. Scientific Reports. [9]  High accuracy phishing detection based on convolutional neural networks. 
+La métrica principal que se utiliza para evaluar el desempeño del modelo es el Recall del mismo. Aunque se calcule la precisión y el F1-Score para tener un panorama más completo, la toma de desiciones y ajustes del modelo se hacen con base en el Recall. Que es, en esté caso, la capacidad de detección de amenazas reales. Ésta métrica se establecio como principal por lo que representa en el modelo y su objetivo (detectar sitios maliciosos phishing para proteger al usuario de estafas) y según lo visto en [5] Phishing URL detection with neural networks: an empirical study y [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). Que lo utiliza para medir el desempeño de sus modelos de detección de phishing y es una práctica usual en el área. [8] Deep learning-based phishing classification framework for accurate detection using optimized URL intelligence. Scientific Reports. [9]  High accuracy phishing detection based on convolutional neural networks; que usaron ésta métrica en sus estudios y en sus modelos. 
 
-¿por qué estás métricas y no otras?
 
-### Recall
-En éste caso, el Recall mide todos los ataques de phishing reales que existen. Un Recall bajo implica que los ataques se están filtrando y llegando al usuario. 
+### Recall (La más importante) 
+El Recall mide todos los ataques de phishing reales que existen. Un Recall bajo implica que los ataques se están filtrando y llegando al usuario lo cual es terrible porque dichos usuarios están sufriendo estafas y extorsiónes. Pero no solo queda ahí, sino que también se extiende a objetivos más grandes como corporaciones y empresas PYMES que pueden ver robada su información o recibiendo ataques que reduzcan sus operaciones, y en un todo, se vean comprometidas.
 
-### Precision
-Mide cuantas respuestas fueron correctas. Si la precisión es muy baja, el usuario recibirá demasiadas falsas alarmas. Esto causa que el usuario termine desactivando el antivirus porque siempre bloquea todo.
+*Impacto de un Recall bajo significa que el modelo es más permisivo. Los ataques de phishing que se filtran, llegan al cliente y resultan en robo de credenciales o fraude financiero.
+
+*Justificación: Se asume que el costo de un ataque exitoso es muy superior al costo de una falsa alarma. Por lo tanto, el éxito del proyecto se define por la minimización absoluta de los Falsos Negativos.
+
+### Precisión
+Mide cuantas respuestas fueron correctas. Si la precisión es muy baja, el usuario recibirá demasiadas falsas alarmas. Esto causa que el usuario termine desactivando el antivirus porque siempre bloquea todo. Pero en este caso, es mejor dar falsas alarmas que dejar pasar el riesgo y que este se manifieste como un peligro real sobre los usuarios y empresas. Por lo mismo, no se tomará en cuenta la precisión del modelo porque lo que nos interesa es detectar el phishing y reducir su filtración, no nos interesa mucho el bloquear accidentalmente páginas legítimas. 
 
 ### F1 SCORE
-El F1-Score penaliza los valores extremos. Si un modelo tiene un Recall de 100% pero una Precision de 10%, el F1-Score será bajo. Te da un número único que resume el balance entre seguridad y usabilidad.
+El F1-Score penaliza los valores extremos, un modelo con un Recall del 100% pero una precisión baja obtendría un F1-Score pobre. Debido a que buscmos maximizar el Recall por encima del equilibrio, el F1-Score no lo consideramos una métrica significativa para medir el desempeño del modelo.
 
 ### Matriz de Confusión
-Nos premite ver exactamente en que se equivocó el modelo (falsos positivos, falsos negativos, verdaderos positivos, etc. )
+Nos permite consultar con exactitud los errores del modelo. A través de ella, vemos los Falsos Positivos y Falsos Negativos, permitiéndonos verificar que el modelo esté cumpliendo con la reducción de ataques filtrados hacia el cliente.
 
-En conclusión, estás metricas son las indicadas para medir el desempeño del modelo por la información que aportan y lo bien establecidas que están tanto en justificacion para el proyecto como en su uso general en el área. 
+En conclusión, el Recall es la métrica indicada para medir el desempeño del modelo por la información que aportan y lo bien establecida que está tanto en justificacion para el proyecto como en su uso general en el área.
+
 
 ## Resultados
 
