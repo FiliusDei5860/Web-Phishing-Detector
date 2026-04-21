@@ -213,8 +213,26 @@ Según [6] Machine Learning and Neural Networks for Phishing Detection: A System
 7. RNN / LSTM (para secuencias)
 8. Transformers (BERT, etc.)
 
+Se usó un MLP para abordar el problema ya que en la literatura (ver: [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024).)  Se recomienda comenzar por un MLP o por un Decision Tree. Pero hay que tener muy claro que un MLP y CNN son modelos neuronale spara distintos datos: Siendo el MLP para datos tabulares y CNN para procesar imagenes. 
 
+El modelo consta de:
+1. 1 capa inicial con función de activación relu con 64 neuronas y un input size de 6 (por las 6 features que estamos manejando) y con nombre "capa_1".
+2. 2 capas ocultas con función de activación relu con 32 y 16 neuronas y con nombre "capa_2" y "capa_3" respectivamente.
+3. 1 final con función de activación sigmoide con 1 neurona ya que nuestros datos están en formato de 1 y 0 y nuestras clases también. Con nombre "capa_salida".
 
+Para compilar el modelo se hizo un model.compile con un optimizador adam, la función loss "binary_crossentropy" y como métrica Recall llamandola "recall_phishing" con un umbral de 0.5 y sacando el Recall de la clase 0 (Phishing). El porque se utiliza Recall se explica en el apartado de Evaluación del modelo--> Metricas de evaluación.
+
+Posteriormente se crea el checkpoint que es paquete que nos ayudará a guardar los pesos en un archivo con nombre de nuestra elección (en éste caso "Pesos_Phishing.weights.h5") **Muy importante: el archivo debe de tener la extensión .weights.h5 por como trabaja keras con él**. Le indicamos que debe de seguir val_recall_phishing (valor del recall de la clase phishing), también le indicamos que debe de guarda solo los pesos (que es lo que nos intersa) y que se quede con los pesos que den el mayor resultado de Recall. Dicho de otra manera: Al momento en el que se entrene el modelo, va monitorear la métrica Recall de la clase phishing (cuantos ataques hemos detectado) y cada vez que el recall mejore, se guardará los pesos que están en ese momento. 
+
+Se entrena el modelo con model.fit, con batch size de 10, 20 épocas con su validation data y pasando el checkpoint como callback 
+
+¿Pero que es un callback?
+
+Un Callback es una herramienta de Keras que nos permite ejecutar acciones automáticas en etapas específicas del entrenamiento (al principio o al final de cada época). Aquí, el callback  interviene cada vez que termina una época para revisar si el rendimiento mejoró y decidir si guarda los pesos o no. Que como ya establecimos, solo guarda los pesos cuando hay una mejora en el Recall. 
+
+Finalmente guardamos el archivo en la ruta que se le especifique dentro del drive, e indicamos que el modelo ha sido guardado exitosamente.
+
+Al final se entrena al modelo y se guarda con el objetivo de poder almacenar los pesos del entrenamiento y colocarlos en otro modelo (cargar en otro modelo) se le debe de dar nombre a las capas para saber en dónde se asigna el peso. 
  
 # Evaluación del modelo
 
@@ -260,22 +278,15 @@ La Precisión de 91.38% representa la confiabilidad del modelo al clasificar los
 El F1-Score de 92.80% es el promedio armonizado entre Recall y Precision dos anteriores. Un F1-Score por encima del 90% indica que el modelo es bastante robusto robusto. Es decir, que está sacrificando demasiada precisión para obtener recall, o al revés. Es un modelo equilibrado y confiable en un 92.80%.
 
 
-# Posibles mejoras al proyecto.
+# Mejoras al proyecto.
 
-## Dos modelos.
+## Ajuste de umbral de detección (ajuste de hiper parámetro)
 
-En el paper [5] Phishing URL detection with neural networks: an empirical study Se establece que para ese caso se utilizaron 2 modelos:
+El Umbral de detección establece una tolerancia al momento de clasificar los datos. normalmente está en el 0.5. es decir, que cuando un resultado es 0.5 o en adelante se considera 1 (legitimo) y abajo de eso es 0 (phishing). en este caso se puede ajustar el umbral subiendolo para detectar más rigurosamente los sitios de phishing (subiendo el umbral al 0.6 o 0.8) abajo de eso, todo es phishing y arriba de eso, todo es legítimo. Que puede dar falsos negativos pero esto podría significar una mejora porque es preferible identificar sitios que si son phishing de verdad y dejar pasar algunos que son dudosos. 
 
-1. Basado en deterministica.
-2. Basado en probabilistica.
+El primer modelo MLP que se hizo tenía un umbral del 0.5 por lo que, si al final de pasar por las capas revolutivas 
 
-Esto podría generar la sensacion de redundancia en la información pero es bueno porque eso ayuda a determinar de manera más acertada si el sitio es phishing o no. Uno modelo nos dice si el sitio es phishing o no y el otro modelo nos dice que podria ser phishing (y no está seguro al 100%)  pero en dónde ambos coinciden, la probabilidad de que sea phishing aumenta y se reducen falsos positivos o falsos negativos.
-
-## Ajuste de umbral de detección. 
-
-El Umbral de detección establece una tolerancia al momento de clasificar los datos. normalmente está en el 0.5. es decir, que cuando un resultado es 0.5 o en adelante se considera 1 (legitimo) y abajo de eso es 0 (phishing). en este caso se puede ajustar el umbral bajandolo para detectar más rigurosamente los sitios de phishing (bajando el umbral al 0.4 o 0.3. abajo de eso, todo es phishing y arriba de eso, todo es legítimo. Que puede dar falsos negativos pero esto podría significar una mejora porque es preferible identificar sitios que si son phishing de verdad y dejar pasar algunos que son dudosos. 
-
-## testing con dataset de la vida real.
+## testing con dataset de la vida real (datos reales de testing. Sin implementar) 
 
 Otra mejora que se suguiere es que en el testing no se utilice el mismo dataset que se uso para entrenar y validar, sino que se utilice uno con datos de la vida real (de otro dataset) para ver el desempeño del modelo en un entorno real. Esto puede tener dificultades porque usualmente se necesitaría transformar los datos de tal manera que queden como los que acepta nuestro modelo. Eso podría siginificar programar el procesos para sacar los datos y agruparlos tal y como espera el modelo recibirlos. Estos dataset pueden ser sacados de https://www.phishtank.com/ y https://tranco-list.eu/list/ZWYQG/1000000
 
