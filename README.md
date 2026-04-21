@@ -45,8 +45,8 @@ El dataset contiene features que se relacionan a la identificación de sitios we
 | ID | Feature (Kaggle) | explicación |
 | :--- | :--- | :--- |
 | 1 | **UsingIP** | Los certificados SSL modernos (HTTPS) no suelen darse para IPs. Un atacante preferirá un dominio gratuito o barato antes que una IP, que alerta a los firewalls. y puede hacerlo ya que los dominios son relativamente baratos en paginas como namescheap, flarecloud, etc|
-| 2 | **LongURL** | El phishing dirigido intenta esconder el dominio malicioso tras una cadena larga, pero los navegadores suelen ocultar la URL completa, reduciendo la efectividad de está téncnica |
-| 3 | **ShortURL** | Con el crecimiento de Smishing (phishing por SMS), los acortadores son la herramienta principal para ocultar enlaces fraudulentos en mensajes de texto cortos que se peuden distribuir en whatsapp, telegram, SMS, etc. |
+| 2 | **LongURL** | El phishing dirigido intenta esconder el dominio malicioso tras una cadena larga, pero los navegadores suelen ocultar la URL completa, reduciendo la efectividad de está técnica |
+| 3 | **ShortURL** | Con el crecimiento de Smishing (phishing por SMS), los acortadores son la herramienta principal para ocultar enlaces fraudulentos en mensajes de texto cortos que se pueden distribuir en whatsapp, telegram, SMS, etc. |
 | 4 | **Symbol@** | Los motores de búsqueda y navegadores actuales identifican como sospechosa cualquier URL que use @ para ofuscar el host. |
 | 5 | **Redirecting//** | Es un error de configuración técnica que los sitios legítimos no suelen cometer. Indica una redirección forzada, un patrón muy común en phishing. |
 | 6 | **PrefixSuffix-** | Explota el factor humano haciendo creer que el sitio es oficial (ej. paypal-support.com). Es una técnica de ingeniería social con alto impacto hoy. |
@@ -213,7 +213,7 @@ Según [6] Machine Learning and Neural Networks for Phishing Detection: A System
 7. RNN / LSTM (para secuencias)
 8. Transformers (BERT, etc.)
 
-Se usó un MLP para abordar el problema ya que en la literatura (ver: [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024).)  Se recomienda comenzar por un MLP o por un Decision Tree. Pero hay que tener muy claro que un MLP y CNN son modelos neuronale spara distintos datos: Siendo el MLP para datos tabulares y CNN para procesar imagenes. 
+Se usó un MLP para abordar el problema ya que en la literatura (ver: [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024).)  Se recomienda comenzar por un MLP o por un Decision Tree. Pero hay que tener muy claro que un MLP y CNN son modelos neuronales para distintos datos: Siendo el MLP para datos tabulares y CNN para procesar imagenes. 
 
 El modelo consta de:
 1. 1 capa inicial con función de activación relu con 64 neuronas y un input size de 6 (por las 6 features que estamos manejando) y con nombre "capa_1".
@@ -235,8 +235,6 @@ Finalmente guardamos el archivo en la ruta que se le especifique dentro del driv
 Al final se entrena al modelo y se guarda con el objetivo de poder almacenar los pesos del entrenamiento y colocarlos en otro modelo (cargar en otro modelo) se le debe de dar nombre a las capas para saber en dónde se asigna el peso. 
 
  
-
- 
 # Evaluación del modelo
 
 ## Evaluacion manual del modelo
@@ -253,7 +251,6 @@ import ipywidgets as widgets
 from IPython.display import display
 
 Se configura la interfaz para que se digiten las 6 features y al presionar el botón "Probar" Entra el modelo a hacer una predicción del resultado y lo clasifica.
-<img width="827" height="277" alt="image" src="https://github.com/user-attachments/assets/46ba7cef-8e3f-4453-bb7c-85d8ede9bf80" />
 
 | ![Display de la instancia manual](https://github.com/user-attachments/assets/46ba7cef-8e3f-4453-bb7c-85d8ede9bf80) |
 | :--: |
@@ -285,20 +282,20 @@ En conclusión, el Recall es la métrica indicada para medir el desempeño del m
 
 ## Resultados
 
-| ![Matriz de Confusion y resultados](https://github.com/user-attachments/assets/b87f3dc3-e9cc-46ba-b5c4-8ee7c4af671f) |
+| ![Matriz de Confusion y resultados](https://github.com/user-attachments/assets/b129304a-5582-4c93-9f06-6039bd021536) |
 | :--: |
-| **Figura 6:** Matriz de confusión y resultados de la evaluación del modelo con métricas F1Score, Recall y Precision. |
+| **Figura 5:** Matriz de confusión y resultados de la evaluación del modelo con métricas F1Score, Recall y Precision con un umbral del 0.5 |
 
 1. 954 (Verdaderos Negativos - TN): Son ataques de Phishing que el modelo bloqueó correctamente.
 2. 868 (Verdaderos Positivos - TP): Son sitios Legítimos que el modelo dejó pasar correctamente.
 3. 58 (Falsos Positivos - FP): Sitios de Phishing que el modelo clasificó como Legítimos.Es decir, que son ataques que se filtraron y llegaron al usuario final
 4. 90 (Falsos Negativos - FN): Sitios seguros que el modelo bloqueó por sospecha. Qué básicamente es una falsa alarma para el usuario. 
 
-El Recall de 94.27% representa la sensibilidad que tiene el modelo para encontrar sitios de phishing. Se podría decir que de cada 100 ataques, el modelo detectó  a más de 94. Lo cuál es un excelente nivel para un modelo base.
+El Recall de 93.87% representa la sensibilidad que tiene el modelo para encontrar sitios de phishing. Se podría decir que de cada 100 ataques, el modelo detectó  a más 93 amenazas. Lo cuál es un buen nivel para un modelo base.
 
-La Precisión de 91.38% representa la confiabilidad del modelo al clasificar los sitios. Cuando el modelo marca un sitio como Phishing, tiene un 91.38% de probabilidad de estar en lo correcto. Si nos fijamos en la matriz de confusión existe un margen de error de 90 casos mal identificados. Es porque el modelo es demasiado estricto al evaluarlos (umbral de tolerancia), pero en ciberseguridad es preferible a ser demasiado permisivo y dejar pasar amenazas que pueden afectar a una compañía o a miles de usuarios. 
+La Precisión de 92.41% representa la confiabilidad del modelo al clasificar los sitios. Cuando el modelo marca un sitio como Phishing, tiene un 91.38% de probabilidad de estar en lo correcto. Si nos fijamos en la matriz de confusión existe un margen de error de 90 casos mal identificados. Es porque el modelo es demasiado estricto al evaluarlos (umbral de tolerancia), pero en ciberseguridad es preferible a ser demasiado permisivo y dejar pasar amenazas que pueden afectar a una compañía o a miles de usuarios. 
 
-El F1-Score de 92.80% es el promedio armonizado entre Recall y Precision dos anteriores. Un F1-Score por encima del 90% indica que el modelo es bastante robusto robusto. Es decir, que está sacrificando demasiada precisión para obtener recall, o al revés. Es un modelo equilibrado y confiable en un 92.80%.
+El F1-Score de 93.84% es el promedio armonizado entre Recall y Precision dos anteriores. Un F1-Score por encima del 90% indica que el modelo es bastante robusto robusto. Es decir, que está sacrificando demasiada precisión para obtener recall, o al revés. Es un modelo equilibrado y confiable en un 93.84%.
 
 
 # Mejoras al proyecto.
@@ -307,11 +304,18 @@ El F1-Score de 92.80% es el promedio armonizado entre Recall y Precision dos ant
 
 El Umbral de detección establece una tolerancia al momento de clasificar los datos. normalmente está en el 0.5. es decir, que cuando un resultado es 0.5 o en adelante se considera 1 (legitimo) y abajo de eso es 0 (phishing). en este caso se puede ajustar el umbral subiendolo para detectar más rigurosamente los sitios de phishing (subiendo el umbral al 0.6 o 0.8) abajo de eso, todo es phishing y arriba de eso, todo es legítimo. Que puede dar falsos negativos pero esto podría significar una mejora porque es preferible identificar sitios que si son phishing de verdad y dejar pasar algunos que son dudosos. 
 
-El primer modelo MLP que se hizo tenía un umbral del 0.5 por lo que, si al final de pasar por las capas revolutivas 
+El primer modelo MLP que se hizo tenía un umbral del 0.5. Por lo que, si al final de pasar por las capas densas se tiene un resultado mayor o igual a dicho umbral, el modelo lo clasificará como un sitio web legítimo. Lo cuál tiene un enorme impacto en el Recall y los resultados del modelo. 
+
+
+| ![Matriz de Confusion y resultados con umbral de 0.8](https://github.com/user-attachments/assets/213dc6ec-6853-4435-b987-db21c864bd33) |
+| :--: |
+| **Figura 6:** Matriz de confusión y resultados de la evaluación del modelo con métricas F1Score, Recall y Precision con un umbral del 0.8 |
+
+Como se pude ver, el Recall sufrió una mejora drastica de poco más de tres puntos, detectando 29 sitios maliciosos más que el modelo con umbral de 0.5. Lo que se traduce como una disminución en los sitios phishing que pueden atacar a las empresas y usuarios que protegemos. El modelo solo falla en identificar 29 sitios phishing de 1012 que existen. todavía se podría rascar un poco más de sitios aumentando el humbral a 0.85 o 0.9 y haciendo modificaciones al modelo haciendo dropout en medio de algunas capas, desactivando neuronas al azar. En la literatura [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). sugiere combinar dos modelos: determinístico y probabilístico para hacer una revisión con más información y aumentar la precision del modelo y el recall. Esa sería otra posible mejora a éste modelo pero para saber si es mejora, debería aumentar el recall y disminuir el numero de falsos positivos. 
 
 ## testing con dataset de la vida real (datos reales de testing. Sin implementar) 
 
-Otra mejora que se suguiere es que en el testing no se utilice el mismo dataset que se uso para entrenar y validar, sino que se utilice uno con datos de la vida real (de otro dataset) para ver el desempeño del modelo en un entorno real. Esto puede tener dificultades porque usualmente se necesitaría transformar los datos de tal manera que queden como los que acepta nuestro modelo. Eso podría siginificar programar el procesos para sacar los datos y agruparlos tal y como espera el modelo recibirlos. Estos dataset pueden ser sacados de https://www.phishtank.com/ y https://tranco-list.eu/list/ZWYQG/1000000
+Otra mejora que se sugiere es que en el testing no se utilice el mismo dataset que se uso para entrenar y validar, sino que se utilice uno con datos de la vida real (de otro dataset) para ver el desempeño del modelo en un entorno real. Esto puede tener dificultades porque usualmente se necesitaría transformar los datos de tal manera que queden como los que acepta nuestro modelo. Eso podría siginificar programar el procesos para sacar los datos y agruparlos tal y como espera el modelo recibirlos. Estos dataset pueden ser sacados de https://www.phishtank.com/ y https://tranco-list.eu/list/ZWYQG/1000000
 
 Solo si se debe de tener en cuenta que no están en el mismo formato que el de nosotros o ni siquiera procesados y se tendría que sacar features, hacer el label y todo el proceso para que se pueda usar dichos datos. 
 
