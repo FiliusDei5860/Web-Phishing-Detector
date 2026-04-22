@@ -11,6 +11,8 @@ Existen distintos tipos de Phishing:
 
 Ahora más que nunca se necesitan métodos para identificar de manera eficiente y segura el phishing. Este proyecto usa un modelo de redes neuronales para la identificación y clasificación binaria de sitios web maliciosos a partir de un dataset sacado de UC Irvine Machine Learning Repository. Pero debido a la caída reciente del servidor, se ha seleccionado una copia que había en Kaggle. Dicho dataset se llama Phishing Websites.
 
+El objetivo del proyecto es crear un MLP que reduzca el riesgo a usuarios finales de entrar a un sitio web malicioso con phishingpor medio de la identificación y clasificación de estos, que son el origen de los ataques, antes de que el usuario pueda ingresar a ellos. 
+
 ## Origen del dataset
 1. Dataset obtenido de UC Irvine Machine Learning Repository. Extraído de Phishing Websites - UCI Machine Learning Repository (sin embargo, no usado por la caída del servidor).
 
@@ -314,7 +316,8 @@ El primer modelo MLP que se hizo tenía un umbral del 0.5. Por lo que, si al fin
 | :--: |
 | **Figura 6:** Matriz de confusión y resultados de la evaluación del modelo con métricas F1Score, Recall y Precision con un umbral del 0.8 |
 
-Como se pude ver, el Recall sufrió una mejora drastica de poco más de tres puntos, detectando 29 sitios maliciosos más que el modelo con umbral de 0.5. Lo que se traduce como una disminución en los sitios phishing que pueden atacar a las empresas y usuarios que protegemos. El modelo solo falla en identificar 29 sitios phishing de 1012 que existen. todavía se podría rascar un poco más de sitios aumentando el humbral a 0.85 o 0.9 y haciendo modificaciones al modelo haciendo dropout en medio de algunas capas, desactivando neuronas al azar. En la literatura [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). sugiere combinar dos modelos: determinístico y probabilístico para hacer una revisión con más información y aumentar la precision del modelo y el recall. Esa sería otra posible mejora a éste modelo pero para saber si es mejora, debería aumentar el recall y disminuir el numero de falsos positivos. 
+Como se pude ver, el Recall sufrió una mejora drastica de poco más de tres puntos, detectando 29 sitios maliciosos más que el modelo con umbral de 0.5. Lo que se traduce como una disminución en los sitios phishing que pueden atacar a las empresas y usuarios que protegemos. El modelo solo falla en identificar 29 sitios phishing de 1012 que existen. todavía se podría rascar un poco más de sitios aumentando el humbral a 0.85 o 0.9 y haciendo modificaciones al modelo haciendo dropout en medio de algunas capas, desactivando neuronas al azar. En la literatura [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). sugiere combinar dos modelos: determinístico y probabilístico para hacer una revisión con más información y aumentar la precision del modelo y el recall. Esa sería otra posible mejora a éste modelo pero para saber si es mejora, debería aumentar el recall y disminuir el numero de falsos positivos.
+
 
 ## testing con dataset de la vida real (datos reales de testing. Sin implementar) 
 
