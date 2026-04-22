@@ -243,7 +243,7 @@ Para evaluar el modelo a mano, se creó un nuevo archivo en google colab y dentr
 Para ello, creamos una función que crea un modelo identico al que entrenamos y compilamos. Se llama la función, se crea el modelo y obtenemos los pesos del archivo en el cual guardamos los pesos del modelo que ya entrenamos. De ésta manea, no necesitamos entrenar el modelo otra vez, lo cual es útil para cuando queramos cargar un modelo entrenado sin la necesidad de tener que entrenarlo en el momento. Rápido y listo para hacer pruebas con él.
 
 Para la prueba manual se necesita una interfaz gráfica en dónde se pueda digitar con 1 y 0 el valor de las features de la instancia que estamos creando. y con base en ello, dar un resultado aproximado si es phishing o no ¿cómo hace esto? pues para esto hay que saber que la neurona sigmoide convierte el resultado en 1 o 0 de acuerdo a un umbral, un umbral de tolerancia. Dicho umbral tiene gran incluencia al momento de clasificar lso sitios, ver sección: Mejoras al proyecto --> Ajuste de umbral de detección (ajuste de hiper parámetro) para más información. 
-Para determinar el porcentaje, solo se arroja el resultado en bruto antes de que la neurona sigmoide lo transforme en 1 o 0.
+Para determinar el porcentaje, solo se arroja el resultado en bruto de la sigmoide antes de que se convierta en 0 u 1 de acuerdo al umbral.
 
 para la interfaz se importan las librerías: 
 
@@ -255,6 +255,9 @@ Se configura la interfaz para que se digiten las 6 features y al presionar el bo
 | ![Display de la instancia manual](https://github.com/user-attachments/assets/46ba7cef-8e3f-4453-bb7c-85d8ede9bf80) |
 | :--: |
 | **Figura 4:** Interfaz gráfica para la creación de una instancia manual y evaluación |
+
+Aquí es importante destacar 2 cosas: 
+1. Se debe de importar el scaler utilizado en el entrenamiento del modelo porque los datos crudos vienen en formato -1,0 y 1. En donde -1 es phishing,0 es sospechoso (neutral) y 1 es legítimo. por lo que si se dan los datos en crudo, sin usar el scaler, la prediccion estará más. es como usar 1 kilo de harina cuando la receta dice 1 gramo. Básicamente necesitamos estandarizar la instancia a evaluar para que el modelo pueda manejarla. Sino se tiene, el modelo recibiría un "1" crudo. Al multiplicarlo por los pesos que aprendió (que son pequeños), el resultado final se sale de rango. Al final, el modelo utiliza decimales y le daríamos enteros. El Scaler asegura que ninguna columna pese más que otra solo por tener números más grandes. Mantiene a todas las features en el mismo nivel de importancia para que la red neuronal pueda decidir bien. 
 
 ## Métricas de evaluación
 
@@ -318,6 +321,7 @@ Como se pude ver, el Recall sufrió una mejora drastica de poco más de tres pun
 Otra mejora que se sugiere es que en el testing no se utilice el mismo dataset que se uso para entrenar y validar, sino que se utilice uno con datos de la vida real (de otro dataset) para ver el desempeño del modelo en un entorno real. Esto puede tener dificultades porque usualmente se necesitaría transformar los datos de tal manera que queden como los que acepta nuestro modelo. Eso podría siginificar programar el procesos para sacar los datos y agruparlos tal y como espera el modelo recibirlos. Estos dataset pueden ser sacados de https://www.phishtank.com/ y https://tranco-list.eu/list/ZWYQG/1000000
 
 Solo si se debe de tener en cuenta que no están en el mismo formato que el de nosotros o ni siquiera procesados y se tendría que sacar features, hacer el label y todo el proceso para que se pueda usar dichos datos. 
+
 
 # Recursos y referencias 
 [1] Phishing Websites - UCI Machine Learning https://archive.ics.uci.edu/dataset/327/phishing+websites
