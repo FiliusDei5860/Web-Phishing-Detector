@@ -316,7 +316,7 @@ El primer modelo MLP que se hizo tenía un umbral del 0.5. Por lo que, si al fin
 | :--: |
 | **Figura 6:** Matriz de confusión y resultados de la evaluación del modelo con métricas F1Score, Recall y Precision con un umbral del 0.8 |
 
-Como se pude ver, el Recall sufrió una mejora drastica de poco más de tres puntos, detectando 29 sitios maliciosos más que el modelo con umbral de 0.5. Lo que se traduce como una disminución en los sitios phishing que pueden atacar a las empresas y usuarios que protegemos. El modelo solo falla en identificar 29 sitios phishing de 1012 que existen. todavía se podría rascar un poco más de sitios aumentando el humbral a 0.85 o 0.9 y haciendo modificaciones al modelo haciendo dropout en medio de algunas capas, desactivando neuronas al azar. En la literatura [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). sugiere combinar dos modelos: determinístico y probabilístico para hacer una revisión con más información y aumentar la precision del modelo y el recall. Esa sería otra posible mejora a éste modelo pero para saber si es mejora, debería aumentar el recall y disminuir el numero de falsos positivos.
+Como se pude ver, el Recall sufrió una mejora drastica de poco más de tres puntos, detectando 29 sitios maliciosos más que el modelo con umbral de 0.5. Lo que se traduce como una disminución en los sitios phishing que pueden atacar a las empresas y usuarios que protegemos. El modelo solo falla en identificar 29 sitios phishing de 1012 que existen. todavía se podría rascar un poco más de sitios aumentando el umbral a 0.85 o 0.9 y haciendo modificaciones al modelo haciendo dropout en medio de algunas capas, desactivando neuronas al azar. En la literatura [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). sugiere combinar dos modelos: determinístico y probabilístico para hacer una revisión con más información y aumentar la precision del modelo y el recall. Esa sería otra posible mejora a éste modelo pero para saber si es mejora, debería aumentar el recall y disminuir el numero de falsos positivos.
 
 
 ## testing con dataset de la vida real (datos reales de testing. Sin implementar) 
@@ -324,6 +324,20 @@ Como se pude ver, el Recall sufrió una mejora drastica de poco más de tres pun
 Otra mejora que se sugiere es que en el testing no se utilice el mismo dataset que se uso para entrenar y validar, sino que se utilice uno con datos de la vida real (de otro dataset) para ver el desempeño del modelo en un entorno real. Esto puede tener dificultades porque usualmente se necesitaría transformar los datos de tal manera que queden como los que acepta nuestro modelo. Eso podría siginificar programar el procesos para sacar los datos y agruparlos tal y como espera el modelo recibirlos. Estos dataset pueden ser sacados de https://www.phishtank.com/ y https://tranco-list.eu/list/ZWYQG/1000000
 
 Solo si se debe de tener en cuenta que no están en el mismo formato que el de nosotros o ni siquiera procesados y se tendría que sacar features, hacer el label y todo el proceso para que se pueda usar dichos datos. 
+
+## Comparativa de los resultados
+
+| Métrica | Modelo sin mejora de umbral (umbral = 0.5) | Modelo con mejora de umbral (umbral = 0.8) | Mejora / Impacto|
+| :--- | :---: | :---: | :--- |
+| **Recall** | 93.87% | **97.13%** | 39 nuevos sitios maliciososo identificados
+| **Precisión** | 92.41% | **87.69%** | Se catalogan más sitios legitimos como maliciososo por error. Pero el error es asumible porqu ees preferente bloquear sitios legítimos a dejar pasar sitios maliciosos|
+| **F1-Score** | 93.14% | **92.17%** | reducción debido a la reducción de la precisión pero no nos importa porque la métrica objetivo es el recall|
+| **Falsos Negativos** | 68 | **29** | ** El modelo es más estricto y se detectarón más sitios maliciosos pero también se clasificaron más sitios legítimos como maliciosos.** |
+
+La tabla comparativa nos indica que existe una mejora en el recall al mover el umbral de 0.5 a 0.8 y que gracias a la misma se han detectado 39 sitios web maliciosos con éxito ulo cuál es una gran mejora respecto al modelo con el umbral a 0.5. Claro, hubo una disminución en el F1 Score y la precisión pero como solo nos importa disminuir los sitios maliciosos que llegan al usuario, no las tomamos en cuenta.
+
+En conclusión, existen multiples acercamientos al problema pero la intención es la misma: Disminuir los ataques que llegan al usuario final y evitar su daño. 
+Para está implementación se alacanzó un buen resultado y una mejora al modelo pero todavía se pueden ejecturar mejoras como implementar un moodelo híbrido que consiste de dos modelos, uno determinístico y otro probabilístico con el objetivo de mejorar la detección de sitios web maliciosos (no mejorar la presicion sino la detección) otra mejora podría venir no solo del ajuste de los hiper parametros, sino que de la arquitectura del modelo, etc. La realidad es que a partir de aquí se tendría que revisar la literatura para encontrar métodos y técnicas que suban el Recall y disminuyan los sitios web phishing que llegan al usuario. 
 
 
 # Recursos y referencias 
