@@ -16,7 +16,7 @@ El objetivo del proyecto es crear un MLP que reduzca el riesgo a usuarios finale
 ## Origen del dataset
 1. Dataset obtenido de UC Irvine Machine Learning Repository. Extraído de Phishing Websites - UCI Machine Learning Repository (sin embargo, no usado por la caída del servidor).
 
-2. Copia del dataset obtenido de Kaggle: Website Phishing <-- este es el que usa el proyecto.
+2. Copia del dataset obtenido de Kaggle: Website Phishing <-- éste es el que usa el proyecto.
 
 ## Descripción del dataset
 
@@ -224,7 +224,7 @@ El modelo consta de:
 
 Para compilar el modelo se hizo un model.compile con un optimizador adam, la función loss "binary_crossentropy" y como métrica Recall llamandola "recall_phishing" con un umbral de 0.5 y sacando el Recall de la clase 0 (Phishing). El porque se utiliza Recall se explica en el apartado de Evaluación del modelo--> Metricas de evaluación.
 
-Posteriormente se crea el checkpoint que es paquete que nos ayudará a guardar los pesos en un archivo con nombre de nuestra elección (en éste caso "Pesos_Phishing.weights.h5") **Muy importante: el archivo debe de tener la extensión .weights.h5 por como trabaja keras con él**. Le indicamos que debe de seguir val_recall_phishing (valor del recall de la clase phishing), también le indicamos que debe de guarda solo los pesos (que es lo que nos intersa) y que se quede con los pesos que den el mayor resultado de Recall. Dicho de otra manera: Al momento en el que se entrene el modelo, va monitorear la métrica Recall de la clase phishing (cuantos ataques hemos detectado) y cada vez que el recall mejore, se guardará los pesos que están en ese momento. 
+Posteriormente se crea el checkpoint que es paquete que nos ayudará a guardar los pesos en un archivo con nombre de nuestra elección (en éste caso "Pesos_Phishing.weights.h5") **Muy importante: el archivo debe de tener la extensión .weights.h5 por como trabaja keras con él**. Le indicamos que debe de seguir val_recall_phishing (valor del recall de la clase phishing), también le indicamos que debe de guardar solo los pesos (que es lo que nos intersa) y que se quede con los pesos que den el mayor resultado de Recall. Dicho de otra manera: Al momento en el que se entrene el modelo, va monitorear la métrica Recall de la clase phishing (cuantos ataques hemos detectado) y cada vez que el recall mejore, se guardará los pesos que están en ese momento. 
 
 Se entrena el modelo con model.fit, con batch size de 10, 20 épocas con su validation data y pasando el checkpoint como callback 
 
@@ -244,7 +244,7 @@ Al final se entrena al modelo y se guarda con el objetivo de poder almacenar los
 Para evaluar el modelo a mano, se creó un nuevo archivo en google colab y dentro vamos a colocar los pesos en un nuevo modelo. 
 Para ello, creamos una función que crea un modelo identico al que entrenamos y compilamos. Se llama la función, se crea el modelo y obtenemos los pesos del archivo en el cual guardamos los pesos del modelo que ya entrenamos. De ésta manea, no necesitamos entrenar el modelo otra vez, lo cual es útil para cuando queramos cargar un modelo entrenado sin la necesidad de tener que entrenarlo en el momento. Rápido y listo para hacer pruebas con él.
 
-Para la prueba manual se necesita una interfaz gráfica en dónde se pueda digitar con 1 y 0 el valor de las features de la instancia que estamos creando. y con base en ello, dar un resultado aproximado si es phishing o no ¿cómo hace esto? pues para esto hay que saber que la neurona sigmoide convierte el resultado en 1 o 0 de acuerdo a un umbral, un umbral de tolerancia. Dicho umbral tiene gran incluencia al momento de clasificar lso sitios, ver sección: Mejoras al proyecto --> Ajuste de umbral de detección (ajuste de hiper parámetro) para más información. 
+Para la prueba manual se necesita una interfaz gráfica en dónde se pueda digitar con 1 y 0 el valor de las features de la instancia que estamos creando. y con base en ello, dar un resultado aproximado si es phishing o no ¿cómo hace esto? pues para esto hay que saber que la neurona sigmoide convierte el resultado en 1 o 0 de acuerdo a un umbral, un umbral de tolerancia. Dicho umbral tiene gran incluencia al momento de clasificar los sitios, ver sección: Mejoras al proyecto --> Ajuste de umbral de detección (ajuste de hiper parámetro) para más información. 
 Para determinar el porcentaje, solo se arroja el resultado en bruto de la sigmoide antes de que se convierta en 0 u 1 de acuerdo al umbral.
 
 para la interfaz se importan las librerías: 
@@ -259,7 +259,7 @@ Se configura la interfaz para que se digiten las 6 features y al presionar el bo
 | **Figura 4:** Interfaz gráfica para la creación de una instancia manual y evaluación |
 
 Aquí es importante destacar 2 cosas: 
-1. Se debe de importar el scaler utilizado en el entrenamiento del modelo porque los datos crudos vienen en formato -1,0 y 1. En donde -1 es phishing,0 es sospechoso (neutral) y 1 es legítimo. por lo que si se dan los datos en crudo, sin usar el scaler, la prediccion estará más. es como usar 1 kilo de harina cuando la receta dice 1 gramo. Básicamente necesitamos estandarizar la instancia a evaluar para que el modelo pueda manejarla. Sino se tiene, el modelo recibiría un "1" crudo. Al multiplicarlo por los pesos que aprendió (que son pequeños), el resultado final se sale de rango. Al final, el modelo utiliza decimales y le daríamos enteros. El Scaler asegura que ninguna columna pese más que otra solo por tener números más grandes. Mantiene a todas las features en el mismo nivel de importancia para que la red neuronal pueda decidir bien. 
+1. Se debe de importar el scaler utilizado en el entrenamiento del modelo porque los datos crudos vienen en formato -1,0 y 1. En donde -1 es phishing,0 es sospechoso (neutral) y 1 es legítimo. por lo que si se dan los datos en crudo, sin usar el scaler, la prediccion estará mal. es como usar 1 kilo de harina cuando la receta dice 1 gramo. Básicamente necesitamos estandarizar la instancia a evaluar para que el modelo pueda manejarla. Sino se tiene, el modelo recibiría un "1" crudo. Al multiplicarlo por los pesos que aprendió (que son pequeños), el resultado final se sale de rango. Al final, el modelo utiliza decimales y le daríamos enteros. El Scaler asegura que ninguna columna pese más que otra solo por tener números más grandes. Mantiene a todas las features en el mismo nivel de importancia para que la red neuronal pueda decidir bien. 
 
 ## Métricas de evaluación
 
@@ -277,7 +277,7 @@ El Recall mide todos los ataques de phishing reales que existen. Un Recall bajo 
 Mide cuantas respuestas fueron correctas. Si la precisión es muy baja, el usuario recibirá demasiadas falsas alarmas. Esto causa que el usuario termine desactivando el antivirus porque siempre bloquea todo. Pero en este caso, es mejor dar falsas alarmas que dejar pasar el riesgo y que este se manifieste como un peligro real sobre los usuarios y empresas. Por lo mismo, no se tomará en cuenta la precisión del modelo porque lo que nos interesa es detectar el phishing y reducir su filtración, no nos interesa mucho el bloquear accidentalmente páginas legítimas. 
 
 ### F1 SCORE
-El F1-Score penaliza los valores extremos, un modelo con un Recall del 100% pero una precisión baja obtendría un F1-Score pobre. Debido a que buscmos maximizar el Recall por encima del equilibrio, el F1-Score no lo consideramos una métrica significativa para medir el desempeño del modelo.
+El F1-Score penaliza los valores extremos, un modelo con un Recall del 100% pero una precisión baja obtendría un F1-Score pobre. Debido a que buscamos maximizar el Recall por encima del equilibrio, el F1-Score no lo consideramos una métrica significativa para medir el desempeño del modelo.
 
 ### Matriz de Confusión
 Nos permite consultar con exactitud los errores del modelo. A través de ella, vemos los Falsos Positivos y Falsos Negativos, permitiéndonos verificar que el modelo esté cumpliendo con la reducción de ataques filtrados hacia el cliente.
@@ -316,12 +316,12 @@ El primer modelo MLP que se hizo tenía un umbral del 0.5. Por lo que, si al fin
 | :--: |
 | **Figura 6:** Matriz de confusión y resultados de la evaluación del modelo con métricas F1Score, Recall y Precision con un umbral del 0.8 |
 
-Como se pude ver, el Recall sufrió una mejora drastica de poco más de tres puntos, detectando 29 sitios maliciosos más que el modelo con umbral de 0.5. Lo que se traduce como una disminución en los sitios phishing que pueden atacar a las empresas y usuarios que protegemos. El modelo solo falla en identificar 29 sitios phishing de 1012 que existen. todavía se podría rascar un poco más de sitios aumentando el umbral a 0.85 o 0.9 y haciendo modificaciones al modelo haciendo dropout en medio de algunas capas, desactivando neuronas al azar. En la literatura [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). sugiere combinar dos modelos: determinístico y probabilístico para hacer una revisión con más información y aumentar la precision del modelo y el recall. Esa sería otra posible mejora a éste modelo pero para saber si es mejora, debería aumentar el recall y disminuir el numero de falsos positivos.
+Como se puede ver, el Recall sufrió una mejora drástica de poco más de tres puntos, detectando 29 sitios maliciosos más que el modelo con umbral de 0.5. Lo que se traduce como una disminución en los sitios phishing que pueden atacar a las empresas y usuarios que protegemos. El modelo solo falla en identificar 29 sitios phishing de 1012 que existen. todavía se podría rascar un poco más de sitios aumentando el umbral a 0.85 o 0.9 y haciendo modificaciones al modelo haciendo dropout en medio de algunas capas, desactivando neuronas al azar. En la literatura [6] Machine Learning and Neural Networks for Phishing Detection: A Systematic Review (2017–2024). sugiere combinar dos modelos: determinístico y probabilístico para hacer una revisión con más información y aumentar la precision del modelo y el recall. Esa sería otra posible mejora a éste modelo pero para saber si es mejora, debería aumentar el recall y disminuir el numero de falsos positivos.
 
 
 ## testing con dataset de la vida real (datos reales de testing. Sin implementar) 
 
-Otra mejora que se sugiere es que en el testing no se utilice el mismo dataset que se uso para entrenar y validar, sino que se utilice uno con datos de la vida real (de otro dataset) para ver el desempeño del modelo en un entorno real. Esto puede tener dificultades porque usualmente se necesitaría transformar los datos de tal manera que queden como los que acepta nuestro modelo. Eso podría siginificar programar el procesos para sacar los datos y agruparlos tal y como espera el modelo recibirlos. Estos dataset pueden ser sacados de https://www.phishtank.com/ y https://tranco-list.eu/list/ZWYQG/1000000
+Otra mejora que se sugiere es que, en el testing, no se utilice el mismo dataset que se uso para entrenar y validar, sino que se utilice uno con datos de la vida real (de otro dataset) para ver el desempeño del modelo en un entorno real. Esto puede tener dificultades porque usualmente se necesitaría transformar los datos de tal manera que queden como los que acepta nuestro modelo. Eso podría significar programar el procesos para sacar los datos y agruparlos tal y como espera el modelo recibirlos. Estos dataset pueden ser sacados de https://www.phishtank.com/ y https://tranco-list.eu/list/ZWYQG/1000000
 
 Solo si se debe de tener en cuenta que no están en el mismo formato que el de nosotros o ni siquiera procesados y se tendría que sacar features, hacer el label y todo el proceso para que se pueda usar dichos datos. 
 
@@ -330,13 +330,13 @@ Solo si se debe de tener en cuenta que no están en el mismo formato que el de n
 | Métrica | Modelo sin mejora de umbral (umbral = 0.5) | Modelo con mejora de umbral (umbral = 0.8) | Mejora / Impacto|
 | :--- | :---: | :---: | :--- |
 | **Recall** | 93.87% | **97.13%** | 39 nuevos sitios maliciososo identificados
-| **Precisión** | 92.41% | **87.69%** | Se catalogan más sitios legitimos como maliciososo por error. Pero el error es asumible porqu ees preferente bloquear sitios legítimos a dejar pasar sitios maliciosos|
-| **F1-Score** | 93.14% | **92.17%** | reducción debido a la reducción de la precisión pero no nos importa porque la métrica objetivo es el recall|
-| **Falsos Negativos** | 68 | **29** | ** El modelo es más estricto y se detectarón más sitios maliciosos pero también se clasificaron más sitios legítimos como maliciosos.** |
+| **Precisión** | 92.41% | **87.69%** | Se catalogan más sitios legítimos como maliciosos por error. Pero el error es asumible porque es preferente bloquear sitios legítimos a dejar pasar sitios maliciosos|
+| **F1-Score** | 93.14% | **92.17%** | bajó debido a la reducción de la precisión pero no nos importa porque la métrica objetivo es el recall|
+| **Falsos Negativos** | 68 | **29** | ** El modelo es más estricto y se detectarón más sitios maliciosos. Pero también se clasificaron más sitios legítimos como maliciosos.** |
 
-La tabla comparativa nos indica que existe una mejora en el recall al mover el umbral de 0.5 a 0.8 y que gracias a la misma se han detectado 39 sitios web maliciosos con éxito ulo cuál es una gran mejora respecto al modelo con el umbral a 0.5. Claro, hubo una disminución en el F1 Score y la precisión pero como solo nos importa disminuir los sitios maliciosos que llegan al usuario, no las tomamos en cuenta.
+La tabla comparativa nos indica que existe una mejora en el Recall al mover el umbral de 0.5 a 0.8 y que gracias a la misma se han detectado 39 sitios web maliciosos con éxito. Lo cuál es una gran mejora respecto al modelo con el umbral a 0.5. Claro, hubo una disminución en el F1 Score y la precisión pero como solo nos importa disminuir los sitios maliciosos que llegan al usuario, no las tomamos en cuenta.
 
-En conclusión, existen multiples acercamientos al problema pero la intención es la misma: Disminuir los ataques que llegan al usuario final y evitar su daño. 
+En conclusión, existen múltiples acercamientos al problema pero la intención es la misma: Disminuir los ataques que llegan al usuario final y evitar su daño. 
 Para está implementación se alacanzó un buen resultado y una mejora al modelo pero todavía se pueden ejecturar mejoras como implementar un moodelo híbrido que consiste de dos modelos, uno determinístico y otro probabilístico con el objetivo de mejorar la detección de sitios web maliciosos (no mejorar la presicion sino la detección) otra mejora podría venir no solo del ajuste de los hiper parametros, sino que de la arquitectura del modelo, etc. La realidad es que a partir de aquí se tendría que revisar la literatura para encontrar métodos y técnicas que suban el Recall y disminuyan los sitios web phishing que llegan al usuario. 
 
 
